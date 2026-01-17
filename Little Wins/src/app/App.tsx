@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import confetti from 'canvas-confetti';
 import { toast, Toaster } from 'sonner';
 import svgPaths from '@/imports/svg-c4adqmk6um';
-import imgGeminiGeneratedImage28Owa628Owa628OwRemovebgPreview1 from 'figma:asset/36d8841d1218a1466587ae874cbb7d64a79abbb8.png';
-import imgMusicCat from 'figma:asset/4cd1ed791c3818c3d00b0666382f2b8e98f830cb.png';
-import imgWorkingCat from 'figma:asset/42e82da45431ecad768f6045ca20ad90ae6f60c3.png';
-import imgSleepyCat from 'figma:asset/b814ba93cb65eabf07d482ff0d3868dc61acb7ee.png';
-import imgGardenerCat from 'figma:asset/a9903360529ebd184ff76d6559afa5a6f3bba76f.png';
+import imgGeminiGeneratedImage28Owa628Owa628OwRemovebgPreview1 from './components/assets/rocketcat.png';
+import imgMusicCat from './components/assets/musiccat.png';
+import imgWorkingCat from './components/assets/workingcat.png';
+import imgSleepyCat from './components/assets/sleepingcat.png';
+import imgGardenerCat from './components/assets/gardencat.png';
 
 interface Goal {
   id: number;

@@ -1,9 +1,10 @@
+import React from "react";
 import svgPaths from "./svg-c4adqmk6um";
-import imgGeminiGeneratedImage28Owa628Owa628OwRemovebgPreview1 from "figma:asset/36d8841d1218a1466587ae874cbb7d64a79abbb8.png";
-import imgMusicCat from "figma:asset/4cd1ed791c3818c3d00b0666382f2b8e98f830cb.png";
-import imgWorkingCat from "figma:asset/42e82da45431ecad768f6045ca20ad90ae6f60c3.png";
-import imgSleepyCat from "figma:asset/b814ba93cb65eabf07d482ff0d3868dc61acb7ee.png";
-import imgGardenerCat from "figma:asset/a9903360529ebd184ff76d6559afa5a6f3bba76f.png";
+import imgRocketCat from "../app/components/assets/rocketcat.png";
+import imgMusicCat from "../app/components/assets/musiccat.png";
+import imgWorkingCat from "../app/components/assets/workingcat.png";
+import imgSleepyCat from "../app/components/assets/sleepingcat.png";
+import imgGardenerCat from "../app/components/assets/gardencat.png";
 
 function DailyChecklistCard() {
   return (
@@ -23,7 +24,7 @@ function DailyChecklistCard() {
         </div>
       </div>
       <div className="absolute h-[150px] left-[386px] top-[-7px] w-[181px]" data-name="Gemini_Generated_Image_28owa628owa628ow-removebg-preview 1">
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgGeminiGeneratedImage28Owa628Owa628OwRemovebgPreview1} />
+        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRocketCat} />
       </div>
       <div className="absolute inset-[18.34%_88.3%_77.83%_6.95%]" data-name="istockphoto-2177795345-612x612 1 (Traced)">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 26 24">
@@ -134,7 +135,7 @@ function StickerLibrary() {
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgGardenerCat} />
       </div>
       <div className="absolute h-[210px] left-[155px] top-[563px] w-[253px]" data-name="Rocket_Cat">
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgGeminiGeneratedImage28Owa628Owa628OwRemovebgPreview1} />
+        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRocketCat} />
       </div>
     </div>
   );
