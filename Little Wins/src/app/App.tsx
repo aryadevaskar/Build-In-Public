@@ -42,7 +42,10 @@ const STICKERS = [
 function DraggableSticker({ sticker }: { sticker: typeof STICKERS[0] }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'sticker',
-    item: { src: sticker.src },
+    item: () => {
+      console.log('Drag started for sticker:', sticker.src);
+      return { src: sticker.src };
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -55,17 +58,25 @@ function DraggableSticker({ sticker }: { sticker: typeof STICKERS[0] }) {
         position: 'absolute',
         left: sticker.left,
         top: sticker.top,
-        opacity: isDragging ? 0.5 : 1,
-        cursor: 'grab',
+        opacity: isDragging ? 0.4 : 1,
+        cursor: isDragging ? 'grabbing' : 'grab',
         transform: `rotate(${sticker.rotation}deg)`,
-        zIndex: 5,
+        zIndex: isDragging ? 1000 : 5,
+        transition: isDragging ? 'none' : 'opacity 0.2s ease',
       }}
     >
       <img 
         src={sticker.src} 
         alt="" 
-        className="pointer-events-none" 
-        style={{ width: '245px', height: '203px', objectFit: 'contain' }} 
+        className="select-none" 
+        style={{ 
+          width: '245px', 
+          height: '203px', 
+          objectFit: 'contain',
+          userSelect: 'none',
+          display: 'block',
+        }} 
+        draggable={false}
       />
     </div>
   );
@@ -76,36 +87,77 @@ function DroppedStickerComponent({ sticker, onRemove }: { sticker: DroppedSticke
     <div
       style={{
         position: 'absolute',
-        left: sticker.x,
-        top: sticker.y,
+        left: `${sticker.x}px`,
+        top: `${sticker.y}px`,
         cursor: 'pointer',
         zIndex: 100,
+        transition: 'transform 0.1s ease',
       }}
       onClick={onRemove}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
       title="Click to remove"
     >
-      <img src={sticker.src} alt="" style={{ width: '150px', height: 'auto' }} />
+      <img 
+        src={sticker.src} 
+        alt="" 
+        style={{ 
+          width: '150px', 
+          height: 'auto',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }} 
+        draggable={false}
+      />
     </div>
   );
 }
 
 function DropZone({ children, onDrop }: { children: React.ReactNode; onDrop: (src: string, x: number, y: number) => void }) {
-  const [, drop] = useDrop(() => ({
+  const [{ isOver }, drop] = useDrop(() => ({
     accept: 'sticker',
     drop: (item: { src: string }, monitor) => {
+      console.log('Drop detected!', item);
       const offset = monitor.getClientOffset();
-      const dropZoneElement = document.getElementById('drop-zone');
+      const dropZoneElement = document.getElementById('calendar-drop-zone');
+      console.log('Offset:', offset, 'DropZoneElement:', dropZoneElement);
       if (offset && dropZoneElement) {
         const rect = dropZoneElement.getBoundingClientRect();
-        const x = offset.x - rect.left - 75;
+        const x = offset.x - rect.left - 75; // Center the sticker on cursor
         const y = offset.y - rect.top - 75;
-        onDrop(item.src, x, y);
+        console.log('Calculated position:', { x, y, rect });
+        onDrop(item.src, Math.max(0, x), Math.max(0, y));
+        return { success: true };
+      } else {
+        console.log('Drop failed - missing offset or element');
       }
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
   }));
 
   return (
-    <div ref={drop as any} id="drop-zone" className="relative">
+    <div 
+      ref={drop as any} 
+      id="calendar-drop-zone" 
+      className="absolute"
+      style={{
+        left: '640px',
+        top: '102px',
+        width: '547px',
+        height: '627px',
+        border: isOver ? '3px dashed #815439' : '2px dashed transparent',
+        borderRadius: '8px',
+        transition: 'border 0.2s ease',
+        zIndex: 1,
+        backgroundColor: isOver ? 'rgba(129, 84, 57, 0.05)' : 'transparent',
+      }}
+    >
       {children}
     </div>
   );
@@ -128,7 +180,14 @@ export default function App() {
   });
 
   const [isAnimating, setIsAnimating] = useState(false);
-  const [droppedStickers, setDroppedStickers] = useState<DroppedSticker[]>([]);
+  const [droppedStickers, setDroppedStickers] = useState<DroppedSticker[]>(() => {
+    const saved = localStorage.getItem('little-wins-dropped-stickers');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('little-wins-dropped-stickers', JSON.stringify(droppedStickers));
+  }, [droppedStickers]);
 
   useEffect(() => {
     localStorage.setItem('little-wins-goals', JSON.stringify(goals));
@@ -236,6 +295,7 @@ export default function App() {
   };
 
   const handleDropSticker = (src: string, x: number, y: number) => {
+    console.log('Dropping sticker:', { src, x, y });
     setDroppedStickers((prev) => [
       ...prev,
       {
@@ -283,7 +343,7 @@ export default function App() {
 
         {/* Daily Checklist Card */}
         <DropZone onDrop={handleDropSticker}>
-          <div className="absolute bg-[#fffaf3] h-[627px] left-[640px] overflow-visible shadow-[0px_4px_11.7px_0px_rgba(151,103,49,0.27)] top-[102px] w-[547px]">
+          <div className="relative bg-[#fffaf3] h-full w-full overflow-visible shadow-[0px_4px_11.7px_0px_rgba(151,103,49,0.27)]">
             {/* Dropped stickers */}
             {droppedStickers.map((sticker) => (
               <DroppedStickerComponent key={sticker.id} sticker={sticker} onRemove={() => removeSticker(sticker.id)} />
